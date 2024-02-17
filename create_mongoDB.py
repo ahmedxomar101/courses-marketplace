@@ -7,8 +7,15 @@ and finally add the course data on the collection(s).
 import pymongo
 import json
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+uri = os.getenv('MONGODB_URI')
+
 # Connect to MongoDB
-client = pymongo.MongoClient("mongodb://localhost:27017/")
+client = pymongo.MongoClient(uri)
+
 db = client["courses_db"]
 collection = db["courses_collection"]
 

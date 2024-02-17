@@ -1,11 +1,20 @@
 import contextlib
 from fastapi import FastAPI, HTTPException, Query
+# from pymongo.server_api import ServerApi
 from pymongo import MongoClient
 from bson import ObjectId
 from fastapi.encoders import jsonable_encoder
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
 app = FastAPI()
-client = MongoClient('mongodb://localhost:27017/')
+
+uri = os.getenv('MONGODB_URI')
+client = MongoClient(uri)
+
 db = client['courses_db']
 
 

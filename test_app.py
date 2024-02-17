@@ -4,8 +4,14 @@ from bson import ObjectId
 import pytest
 from main import app
 
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+uri = os.getenv('MONGODB_URI')
+
 client = TestClient(app)
-mongo_client = MongoClient('mongodb://localhost:27017/')
+mongo_client = MongoClient(uri)
 db = mongo_client['courses_db']
 
 def test_get_courses_no_params():
@@ -67,11 +73,11 @@ def test_get_courses_filter_by_domain_and_sort_by_rating():
 
 ################################################################################
 def test_get_course_by_id_exists():
-    response = client.get("/courses/65d0bc32869153d3412ad583")
+    response = client.get("/courses/65d1253846556d4603eef108")
     assert response.status_code == 200
     course = response.json()
     # get the course from the database
-    course_db = db.courses_collection.find_one({'_id': ObjectId('65d0bc32869153d3412ad583')})
+    course_db = db.courses_collection.find_one({'_id': ObjectId('65d1253846556d4603eef108')})
     # get the name of the course from the database
     name_db = course_db['name']
     # get the name of the course from the response
@@ -87,7 +93,7 @@ def test_get_course_by_id_not_exists():
 
 ################################################################################
 def test_get_chapter_info():
-    response = client.get("/courses/65d0bc32869153d3412ad583/1")
+    response = client.get("/courses/65d1253846556d4603eef108/1")
     assert response.status_code == 200
     chapter = response.json()
     assert chapter['name'] == 'Big Picture of Calculus'
@@ -95,13 +101,13 @@ def test_get_chapter_info():
     
     
 def test_get_chapter_info_not_exists():
-    response = client.get("/courses/65d0bc32869153d3412ad583/990")
+    response = client.get("/courses/65d1253846556d4603eef108/990")
     assert response.status_code == 404
     assert response.json() == {'detail': 'Chapter not found'}
     
 ################################################################################
 def test_rate_chapter():
-    course_id = "65d0bc32869153d3412ad583"
+    course_id = "65d1253846556d4603eef108"
     chapter_id = "1"
     rating = 1
 
