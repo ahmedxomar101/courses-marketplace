@@ -59,3 +59,16 @@ def get_course(course_id: str):
     return course
 
 
+@app.get('/courses/{course_id}/{chapter_id}')
+def get_chapter(course_id: str, chapter_id: str):    
+    course = db.courses_collection.find_one({'_id': ObjectId(course_id)}, {'_id': 0, })
+    if not course:
+        raise HTTPException(status_code=404, detail='Course not found')
+    chapters = course.get('chapters', [])
+    try:
+        chapter = chapters[int(chapter_id)]
+    except (ValueError, IndexError) as e:
+        raise HTTPException(status_code=404, detail='Chapter not found') from e
+    return chapter
+
+
