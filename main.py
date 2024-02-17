@@ -74,7 +74,7 @@ def get_chapter(course_id: str, chapter_id: str):
 
 @app.post('/courses/{course_id}/{chapter_id}')
 def rate_chapter(course_id: str, chapter_id: str, rating: int = Query(..., gt=-2, lt=2)):
-    course = db.courses.find_one({'_id': ObjectId(course_id)}, {'_id': 0, })
+    course = db.courses_collection.find_one({'_id': ObjectId(course_id)}, {'_id': 0, })
     if not course:
         raise HTTPException(status_code=404, detail='Course not found')
     chapters = course.get('chapters', [])
@@ -87,5 +87,5 @@ def rate_chapter(course_id: str, chapter_id: str, rating: int = Query(..., gt=-2
         chapter['rating']['count'] += 1
     except KeyError:
         chapter['rating'] = {'total': rating, 'count': 1}
-    db.courses.update_one({'_id': ObjectId(course_id)}, {'$set': {'chapters': chapters}})
+    db.courses_collection.update_one({'_id': ObjectId(course_id)}, {'$set': {'chapters': chapters}})
     return chapter
